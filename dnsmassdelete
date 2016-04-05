@@ -1,0 +1,18 @@
+#!/bin/bash
+
+while read line
+do
+	for word in $line;
+	do
+		if [ "$count" == 0 ];
+		then
+			a="$(dig $word +answer +nocomments +noquestion +noauthority +noadditional +nostats | grep 'A')"
+			echo "update delete $a";
+			count=$((count+1)) 
+		else
+			ptr="$(dig -x $word +answer +nocomments +noquestion +noauthority +noadditional +nostats | grep 'PTR')"
+			echo "update delete $ptr";
+			let  "count=0"
+		fi
+	done
+done < $1
